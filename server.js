@@ -27,12 +27,11 @@ const okxPub = async (p) => {
 
 const okxAuth = async (p) => {
   const ts  = new Date().toISOString();
-  const sig = crypto.createHmac("sha256", OKX_SEC)
-    .update(ts + "GET" + "/api/v5" + p)
-    .digest("base64");
+  const msg = ts + "GET" + "/api/v5" + p;
+  const sig = crypto.createHmac("sha256", OKX_SEC).update(msg).digest("base64");
   const r = await fetch(OKX_BASE + p, {
     headers: {
-      "Accept":              "application/json",
+      "Content-Type":        "application/json",
       "OK-ACCESS-KEY":       OKX_KEY,
       "OK-ACCESS-SIGN":      sig,
       "OK-ACCESS-TIMESTAMP": ts,
@@ -40,7 +39,7 @@ const okxAuth = async (p) => {
     },
   });
   const j = await r.json();
-  if (j.code !== "0") throw new Error(j.msg || "OKX auth error");
+  if (j.code !== "0") throw new Error("OKX " + j.code + ": " + (j.msg || "unknown"));
   return j.data;
 };
 
