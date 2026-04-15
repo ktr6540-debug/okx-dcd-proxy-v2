@@ -165,4 +165,8 @@ if (TG_TOKEN && TG_CHAT) {
   console.log("✅ Telegram cron: daily 9am KST");
 }
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 app.listen(PORT, () => console.log("🚀 DCD v2 on port " + PORT));
