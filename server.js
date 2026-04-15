@@ -1,25 +1,50 @@
 const express = require("express");
-const cors = require("cors");
-const path = require("path");
-const cron = require("node-cron");
+const cors    = require("cors");
+const path    = require("path");
+const cron    = require("node-cron");
+const crypto  = require("crypto");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-const PORT = process.env.PORT || 3000;
-const OKX = "https://www.okx.com/api/v5";
+const PORT     = process.env.PORT || 3000;
+const OKX_BASE = "https://www.okx.com/api/v5";
 const TG_TOKEN = process.env.TELEGRAM_TOKEN;
 const TG_CHAT  = process.env.TELEGRAM_CHAT_ID;
+const OKX_KEY  = process.env.OKX_API_KEY;
+const OKX_SEC  = process.env.OKX_SECRET_KEY;
+const OKX_PASS = process.env.OKX_PASSPHRASE;
 
-const okx = async (path) => {
-  const r = await fetch(`${OKX}${path}`, { headers: { Accept: "application/json" } });
+// ── OKX API 호출 ──────────────────────────────────────────────────────────────
+const okxPub = async (p) => {
+  const r = await fetch(OKX_BASE + p, { headers: { Accept: "application/json" } });
   const j = await r.json();
-  if (j.code !== "0") throw new Error(j.msg || "OKX error");
+  if (j.code !== "0") throw new Error(j.msg || "OKX public error");
   return j.data;
 };
 
+const okxAuth = async (p) => {
+  const ts  = new Date().toISOString();
+  const sig = crypto.createHmac("sha256", OKX_SEC)
+    .update(ts + "GET" + "/api/v5" + p)
+    .digest("base64");
+  const r = await fetch(OKX_BASE + p, {
+    headers: {
+      "Accept":              "application/json",
+      "OK-ACCESS-KEY":       OKX_KEY,
+      "OK-ACCESS-SIGN":      sig,
+      "OK-ACCESS-TIMESTAMP": ts,
+      "OK-ACCESS-PASSPHRASE": OKX_PASS,
+    },
+  });
+  const j = await r.json();
+  if (j.code !== "0") throw new Error(j.msg || "OKX auth error");
+  return j.data;
+};
+
+// ── Analysis helpers ──────────────────────────────────────────────────────────
 const fearGreed = async () => {
   try {
     const r = await fetch("https://api.alternative.me/fng/?limit=1");
@@ -30,7 +55,7 @@ const fearGreed = async () => {
 
 const dvol = async (coin) => {
   try {
-    const r = await fetch(`https://www.deribit.com/api/v2/public/get_index_price?index_name=${coin.toLowerCase()}dvol_usdc`);
+    const r = await fetch("https://www.deribit.com/api/v2/public/get_index_price?index_name=" + coin.toLowerCase() + "dvol_usdc");
     const j = await r.json();
     return j.result?.index_price ?? null;
   } catch { return null; }
@@ -68,17 +93,25 @@ const autoAdjust = (products, safeStrike, optType, price, wATR, fundingRate) => 
   return { product: safe[0], adjusted: false, iterations: 0 };
 };
 
+// ── Data endpoint ─────────────────────────────────────────────────────────────
 app.get("/data", async (req, res) => {
   const { coin = "BTC", optType = "C", quoteCcy = "USDG", expiryDays = "3" } = req.query;
   const days = parseInt(expiryDays);
   try {
-    const [tickerData, candleData, fundingData, dcdData, fg, dvolVal] = await Promise.all([
-      okx(`/market/ticker?instId=${coin}-USDT`),
-      okx(`/market/candles?instId=${coin}-USDT&bar=1D&limit=9`),
-      okx(`/public/funding-rate?instId=${coin}-USDT-SWAP`),
-      okx(`/finance/sfp/dcd/products?baseCcy=${coin}&quoteCcy=${quoteCcy}&optType=${optType}`),
-      fearGreed(), dvol(coin),
+    // 공개 API (인증 불필요)
+    const [tickerData, candleData, fundingData, fg, dvolVal] = await Promise.all([
+      okxPub("/market/ticker?instId=" + coin + "-USDT"),
+      okxPub("/market/candles?instId=" + coin + "-USDT&bar=1D&limit=9"),
+      okxPub("/public/funding-rate?instId=" + coin + "-USDT-SWAP"),
+      fearGreed(),
+      dvol(coin),
     ]);
+
+    // 인증 필요 API (DCD 상품)
+    const dcdData = await okxAuth(
+      "/finance/sfp/dcd/products?baseCcy=" + coin + "&quoteCcy=" + quoteCcy + "&optType=" + optType
+    );
+
     const price     = parseFloat(tickerData[0].last);
     const change24h = ((price - parseFloat(tickerData[0].open24h)) / parseFloat(tickerData[0].open24h)) * 100;
     const candles   = candleData.slice(1, 8);
@@ -130,9 +163,10 @@ app.get("/data", async (req, res) => {
   }
 });
 
+// ── Telegram ──────────────────────────────────────────────────────────────────
 const tgSend = async (msg) => {
   if (!TG_TOKEN || !TG_CHAT) return;
-  await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+  await fetch("https://api.telegram.org/bot" + TG_TOKEN + "/sendMessage", {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ chat_id: TG_CHAT, text: msg, parse_mode: "HTML" }),
   });
@@ -142,8 +176,8 @@ if (TG_TOKEN && TG_CHAT) {
   cron.schedule("0 0 * * *", async () => {
     try {
       const [b, e2] = await Promise.all([
-        fetch(`http://localhost:${PORT}/data?coin=BTC&optType=C&quoteCcy=USDG&expiryDays=3`).then(r => r.json()),
-        fetch(`http://localhost:${PORT}/data?coin=ETH&optType=C&quoteCcy=USDG&expiryDays=3`).then(r => r.json()),
+        fetch("http://localhost:" + PORT + "/data?coin=BTC&optType=C&quoteCcy=USDG&expiryDays=3").then(r => r.json()),
+        fetch("http://localhost:" + PORT + "/data?coin=ETH&optType=C&quoteCcy=USDG&expiryDays=3").then(r => r.json()),
       ]);
       const f = n => n?.toLocaleString("en-US", { maximumFractionDigits: 0 }) ?? "-";
       const p = n => n != null ? (n * 100).toFixed(2) + "%" : "-";
@@ -165,6 +199,7 @@ if (TG_TOKEN && TG_CHAT) {
   console.log("✅ Telegram cron: daily 9am KST");
 }
 
+// ── Routes ────────────────────────────────────────────────────────────────────
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
