@@ -21,7 +21,7 @@ const OKX_PASS = process.env.OKX_PASSPHRASE;
 const okxPub = async (p) => {
   const r = await fetch(OKX_BASE + p, { headers: { Accept: "application/json" } });
   const j = await r.json();
-  if (j.code !== "0") throw new Error(j.msg || "OKX public error");
+  if (String(j.code) !== "0") throw new Error(j.msg || "OKX public error");
   return j.data;
 };
 
@@ -39,7 +39,7 @@ const okxAuth = async (p) => {
     },
   });
   const j = await r.json();
-  if (j.code !== "0") throw new Error("OKX " + j.code + ": " + (j.msg || "unknown"));
+  if (String(j.code) !== "0") throw new Error("OKX " + j.code + ": " + (j.msg || "unknown"));
   return j.data;
 };
 
