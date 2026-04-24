@@ -54,9 +54,6 @@ select{font-size:12px;padding:7px 8px;border-radius:7px;border:1px solid #ddd;ba
 <body>
 <div id="app"></div>
 <script>
-// ------------------------------------------------------------
-//  실제 OKX API 연동 /data 엔드포인트 필요
-// ------------------------------------------------------------
 var INSTS=[
   {key:"BTC-C",label:"BTC-USDG 콜",tag:"CALL",coin:"BTC",optType:"C",quoteCcy:"USDG",ac:"#BA7517",li:"#FAEEDA",tBg:"#FAEEDA",tC:"#854F0B"},
   {key:"ETH-C",label:"ETH-USDG 콜",tag:"CALL",coin:"ETH",optType:"C",quoteCcy:"USDG",ac:"#185FA5",li:"#E6F1FB",tBg:"#FAEEDA",tC:"#854F0B"},
@@ -142,40 +139,28 @@ function closeTodayModal(){
 }
 
 function renderTodayModal(){
-  // 이미 모달이 열려 있으면 다시 열지 않음 (중복 방지)
   if(document.getElementById("today-modal")) return;
-  
   var today = new Date().toLocaleDateString("ko-KR");
   var todayItems = S.hist.filter(function(h){ return h.outcome==="pending" && h.expiry === today; });
-  
   var modal = mk("div","modal-bg");
   modal.id = "today-modal";
   var box = mk("div","modal-box");
-  
-  // 헤더
   var header = mk("div");
   header.style.display = "flex";
   header.style.justifyContent = "space-between";
   header.style.alignItems = "center";
   header.style.marginBottom = "12px";
-  
   var title = mk("div");
   title.style.fontWeight = "700";
   title.style.fontSize = "15px";
   title.textContent = "📅 오늘 만기 상품 (" + today + ")";
-  
   var closeBtn = mk("span");
   closeBtn.textContent = "✕";
   closeBtn.style.cssText = "font-size:20px;cursor:pointer;color:#aaa";
-  closeBtn.onclick = function(e){
-    e.stopPropagation();
-    closeTodayModal();
-  };
-  
+  closeBtn.onclick = function(e){ e.stopPropagation(); closeTodayModal(); };
   header.appendChild(title);
   header.appendChild(closeBtn);
   box.appendChild(header);
-  
   if(todayItems.length === 0){
     var empty = mk("div");
     empty.style.textAlign = "center";
@@ -192,28 +177,17 @@ function renderTodayModal(){
       box.appendChild(item);
     });
   }
-  
   modal.appendChild(box);
-  
-  // 배경 클릭 시 닫힘
   modal.addEventListener("click", function(e){
     if(e.target === modal) closeTodayModal();
   });
-  
   document.body.appendChild(modal);
   S.showTodayModal = true;
 }
 
 function renderAnalysis(){
   var i=inst(),d=S.data,w=mk("div");
-  if(S.phase==="error"){
-    w.appendChild(mk("div","eb","<b>오류:</b> "+S.err));
-    // XAUT 미지원 안내 추가
-    if(i.coin==="XAUT"){
-      w.appendChild(mk("div","card","<div style='text-align:center;padding:20px;color:#888'><b>XAUT/USDT</b> 듀얼 인베스트먼트 데이터는<br>현재 서버에서 아직 지원되지 않습니다.<br><small>OKX API 연동이 진행 중입니다.</small></div>"));
-    }
-    return w;
-  }
+  if(S.phase==="error"){w.appendChild(mk("div","eb","<b>오류:</b> "+S.err));return w;}
   if(S.phase==="idle"){w.innerHTML='<div class="em"><div style="font-size:36px;margin-bottom:8px">◈</div><div style="font-weight:700;color:#444;font-size:15px;margin-bottom:4px">'+i.label+' 분석 준비</div><div style="font-size:12px">가중 ATR · 공포탐욕 · DVOL · 안전 TOP3</div></div>';return w;}
   if(S.phase==="loading"){w.innerHTML='<div class="ld"><div style="font-size:13px;font-weight:600;color:#555;margin-bottom:6px">OKX 실시간 조회 중...</div><div style="font-size:11px;color:#bbb;margin:3px 0">· 현재가·캔들·펀딩비율</div><div style="font-size:11px;color:#bbb;margin:3px 0">· DCD 상품 목록</div><div style="font-size:11px;color:#bbb;margin:3px 0">· 공포탐욕·DVOL·가중ATR</div></div>';return w;}
   if(!d)return w;
@@ -290,6 +264,9 @@ function renderAnalysis(){
 }
 
 function render(){
+  // 모달 상태 보존 (render() 실행 전에 열려 있었는지 확인)
+  var wasModalOpen = S.showTodayModal && document.getElementById("today-modal");
+  
   var i=inst();
   var app=document.getElementById("app");
   app.innerHTML="";cv(app,i.ac,i.li);
@@ -332,9 +309,10 @@ function render(){
   pg.appendChild(renderAnalysis());
   app.appendChild(pg);
   
-  // 모달이 열려 있어야 하면 (render 호출 전에 열려 있었다면) 다시 그림
-  // 단, 이미 DOM에 존재하면 renderTodayModal에서 중복 생성을 막으므로 안전
-  if(S.showTodayModal) renderTodayModal();
+  // 모달이 열려 있었다면 다시 그려주기 (render()로 인해 닫혔을 수 있으므로)
+  if(wasModalOpen && !document.getElementById("today-modal")) {
+    renderTodayModal();
+  }
 }
 init();
 </script>
