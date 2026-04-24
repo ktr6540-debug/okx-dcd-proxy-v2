@@ -13,10 +13,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f5f5f5;
 .tab.on{border-color:var(--ac);background:var(--li)}
 .tl{font-size:11px;font-weight:700;color:#888}.tab.on .tl{color:var(--ac)}
 .tt{font-size:9px;padding:1px 5px;border-radius:4px;font-weight:700;display:inline-block;margin-top:2px}
-.nav{display:flex;border-bottom:1px solid #eee}
-.nb{flex:1;padding:8px 4px 6px;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;color:#aaa}
-.nb.on{border-bottom-color:var(--ac);color:var(--ac)}
-.ni{font-size:15px}.nl{font-size:9px}.nb.on .nl{font-weight:700}
 .ctrl{display:flex;gap:7px;margin-top:8px}
 select{font-size:12px;padding:7px 8px;border-radius:7px;border:1px solid #ddd;background:#fff;color:#1a1a1a}
 .rb{flex:2;padding:8px 0;border-radius:7px;border:none;background:var(--ac);color:#fff;font-size:13px;font-weight:700;cursor:pointer}
@@ -47,26 +43,12 @@ select{font-size:12px;padding:7px 8px;border-radius:7px;border:1px solid #ddd;ba
 .eb{background:#FCEBEB;color:#A32D2D;border-radius:10px;padding:10px 13px;font-size:12px;margin-bottom:12px}
 .ts{font-size:10px;color:#bbb;font-family:monospace;text-align:right;margin-bottom:8px}
 .disc{font-size:11px;color:#ccc;line-height:1.5;margin-top:4px}
-.fi{width:100%;font-size:12px;padding:6px 8px;border-radius:7px;border:1px solid #ddd;color:#1a1a1a;background:#fff}
 .sb{width:100%;padding:9px;border:none;border-radius:8px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;background:var(--ac)}
-.hs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px}
-.hsi{background:#f7f7f7;border-radius:9px;padding:10px 8px;text-align:center}
-.hi{background:#fff;border:1px solid #eee;border-radius:10px;padding:11px 13px;margin-bottom:8px}
-.hih{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
-.ha{display:flex;gap:5px;margin-top:7px}
-.hb{flex:1;padding:5px;font-size:11px;border-radius:6px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer;color:#666}
-.pfg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.pfc{background:#f7f7f7;border-radius:9px;padding:10px 8px;text-align:center}
-.per{display:flex;align-items:center;gap:10px;margin-bottom:7px}
-.pi{flex:1;font-size:13px;padding:6px 8px;border-radius:7px;border:1px solid #ddd;font-family:monospace;color:#1a1a1a;background:#fff}
-.eb2{font-size:11px;background:none;border:1px solid #ddd;border-radius:6px;padding:3px 8px;cursor:pointer;color:#666}
-.ppr{display:flex;justify-content:space-between;padding:6px 0;font-size:12px;border-bottom:1px solid #f0f0f0}
-.srow{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid #f0f0f0}
 .pick-card{border:1.5px solid #eee;border-radius:10px;padding:11px 13px;cursor:pointer;background:#fff;margin-bottom:7px}
 .pick-card.on{border-color:var(--ac);background:var(--li)}
-.sim-res{background:#fff;border:1.5px solid #eee;border-radius:12px;padding:13px 15px;margin-bottom:10px}
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:#e0e0e0;outline:none;margin:8px 0}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:24px;height:24px;border-radius:50%;background:var(--ac,#BA7517);cursor:pointer}
+.eb2{font-size:11px;background:none;border:1px solid #ddd;border-radius:6px;padding:3px 8px;cursor:pointer;color:#666}
+.modal-bg{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:center;justify-content:center}
+.modal-box{background:#fff;border-radius:14px;width:90%;max-width:400px;max-height:70vh;overflow-y:auto;padding:16px}
 </style>
 </head>
 <body>
@@ -75,31 +57,29 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
 var INSTS=[
   {key:"BTC-C",label:"BTC-USDG 콜",tag:"CALL",coin:"BTC",optType:"C",quoteCcy:"USDG",ac:"#BA7517",li:"#FAEEDA",tBg:"#FAEEDA",tC:"#854F0B"},
   {key:"ETH-C",label:"ETH-USDG 콜",tag:"CALL",coin:"ETH",optType:"C",quoteCcy:"USDG",ac:"#185FA5",li:"#E6F1FB",tBg:"#FAEEDA",tC:"#854F0B"},
-  {key:"ETH-P",label:"USDG-ETH 풋",tag:"PUT",coin:"ETH",optType:"P",quoteCcy:"USDG",ac:"#3B6D11",li:"#EAF3DE",tBg:"#EAF3DE",tC:"#3B6D11"}
+  {key:"ETH-P",label:"USDG-ETH 풋",tag:"PUT",coin:"ETH",optType:"P",quoteCcy:"USDG",ac:"#3B6D11",li:"#EAF3DE",tBg:"#EAF3DE",tC:"#3B6D11"},
+  {key:"XAUT-C",label:"XAUT-USDT 콜",tag:"CALL",coin:"XAUT",optType:"C",quoteCcy:"USDT",ac:"#D4AF37",li:"#FBF7E7",tBg:"#FAEEDA",tC:"#854F0B"},
+  {key:"XAUT-P",label:"USDT-XAUT 풋",tag:"PUT",coin:"XAUT",optType:"P",quoteCcy:"USDT",ac:"#B8860B",li:"#F9F2D8",tBg:"#EAF3DE",tC:"#3B6D11"}
 ];
-var PAGES=[{key:"analysis",icon:"◈",lbl:"분석"},{key:"simulator",icon:"⟿",lbl:"시뮬"},{key:"history",icon:"☰",lbl:"이력"},{key:"portfolio",icon:"◻",lbl:"포트"}];
-var HK="dcd-h5",PK="dcd-p2";
+var HK="dcd-h5-v2";
 var SAF={safe:{l:"안전",bg:"#EAF3DE",c:"#3B6D11"},moderate:{l:"보통",bg:"#FAEEDA",c:"#854F0B"},caution:{l:"주의",bg:"#FCEBEB",c:"#A32D2D"}};
 
 function fmt(n,d){if(n==null)return"-";return Number(n).toLocaleString("en-US",{minimumFractionDigits:d||0,maximumFractionDigits:d||0});}
-function fmtP(n){return n==null?"-":(n*100).toFixed(2)+"%";}
 function fgC(v){return v<30?"#A32D2D":v<50?"#854F0B":v<75?"#3B6D11":"#185FA5";}
 function slv(s){return s>=70?"safe":s>=50?"moderate":"caution";}
 function lsGet(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
 var S={
-  page:"analysis",sk:"BTC-C",exp:3,
+  sk:"BTC-C",exp:3,
   phase:"idle",data:null,err:"",ts:"",
-  selPick:0,simPick:0,simQty:1,simMove:0,
-  hist:[],hf:{date:"",coin:"BTC",optType:"C",strike:"",apy:"",qty:"",note:"",outcome:"pending"},
-  pf:{btc:0,eth:0,usdg:0},pfe:false,pfv:{btc:"0",eth:"0",usdg:"0"}
+  selPick:0,
+  hist:lsGet(HK,[]),
+  showTodayModal:false
 };
 
 function init(){
   S.hist=lsGet(HK,[]);
-  S.pf=lsGet(PK,{btc:0,eth:0,usdg:0});
-  S.pfv={btc:String(S.pf.btc),eth:String(S.pf.eth),usdg:String(S.pf.usdg)};
   render();
 }
 
@@ -116,71 +96,58 @@ function top3(){
 
 function runAnalysis(){
   var i=inst();
-  S.phase="loading";S.err="";S.data=null;S.selPick=0;S.simPick=0;render();
+  S.phase="loading";S.err="";S.data=null;S.selPick=0;render();
   fetch("/data?coin="+i.coin+"&optType="+i.optType+"&quoteCcy="+i.quoteCcy+"&expiryDays="+S.exp)
     .then(function(r){if(!r.ok)throw new Error("서버 오류 "+r.status);return r.json();})
     .then(function(d){if(d.error)throw new Error(d.error);S.data=d;S.ts=new Date().toLocaleTimeString("ko-KR");S.phase="done";render();})
     .catch(function(e){S.err=e.message;S.phase="error";render();});
 }
 
-function buildSimHTML(){
-  var i=inst(),d=S.data;
-  if(!d)return"";
-  var picks=top3();
-  if(!picks.length)return'<div style="font-size:12px;color:#aaa;text-align:center;padding:16px">안전 범위 상품 없음</div>';
-  var sp=picks[S.simPick]||picks[0];
-  var qty=S.simQty||1;
-  var np=d.price*(1+S.simMove/100);
-  var asgn=i.optType==="C"?np>=sp.strikeNum:np<=sp.strikeNum;
-  var premCoin=(sp.absYield||0)*qty;
-  var premUSDG=premCoin*d.price;
-  var opCost=asgn?Math.abs(np-sp.strikeNum)*qty:0;
-  var net=premUSDG-opCost;
-
-  var h='<div class="sim-res" style="border-color:'+(asgn?"#A32D2D":"#3B6D11")+'">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
-    +'<div style="font-size:14px;font-weight:700">시나리오 결과</div>'
-    +'<span class="bdg" style="background:'+(asgn?"#FCEBEB":"#EAF3DE")+';color:'+(asgn?"#A32D2D":"#3B6D11")+'">'+(asgn?"⚠ 할당됨":"✅ 미할당")+'</span></div>';
-
-  var rows=[
-    ["행사가","$"+fmt(sp.strikeNum),"#1a1a1a"],
-    ["만기 예상가","$"+fmt(np),np>=d.price?"#3B6D11":"#A32D2D"],
-    ["프리미엄 수익","+"+premCoin.toFixed(6)+" "+i.coin+" (≈$"+fmt(premUSDG,2)+")","#3B6D11"]
-  ];
-  if(asgn)rows.push(["기회비용","-$"+fmt(opCost,2)+" USDG","#A32D2D"]);
-  rows.push(["순 손익",(net>=0?"+":"")+fmt(net,2)+" USDG",net>=0?"#3B6D11":"#A32D2D"]);
-
-  rows.forEach(function(r,idx){
-    h+='<div class="rrow"'+(idx===rows.length-1?' style="border-bottom:none"':'')+'>'
-      +'<span style="color:#888">'+r[0]+'</span>'
-      +'<span style="font-family:monospace;font-weight:700;color:'+r[2]+'">'+r[1]+'</span></div>';
-  });
-  h+='<div style="border-radius:7px;padding:8px 10px;margin-top:8px;font-size:11px;line-height:1.5;background:'+(asgn?"#FAEEDA":"#EAF3DE")+';color:'+(asgn?"#854F0B":"#3B6D11")+'">'
-    +(asgn?'<b>할당됨</b> — BTC가 $'+fmt(sp.strikeNum)+' 이상 마감. 보유 '+qty+'코인이 USDG로 강제 매도. 프리미엄은 받지만 코인을 팔게 됩니다.'
-          :'<b>미할당</b> — BTC가 $'+fmt(sp.strikeNum)+' 미만 마감. 코인 그대로 유지 + 프리미엄 수취.')+'</div></div>';
-  return h;
+function addHistFromPick(strikeNum, apy, coin, optType, expiryDate){
+  var today = new Date().toLocaleDateString("ko-KR");
+  var record = {
+    id: Date.now(),
+    createdAt: today,
+    coin: coin,
+    optType: optType,
+    strike: String(strikeNum),
+    apy: String((apy*100).toFixed(2)),
+    qty: "",
+    note: "분석에서 저장",
+    outcome: "pending",
+    expiry: expiryDate || today
+  };
+  S.hist = [record].concat(S.hist);
+  lsSet(HK, S.hist);
 }
-
-function patchSim(){
-  var area=document.getElementById("sim-res-area");
-  if(area)area.innerHTML=buildSimHTML();
-  var lbl=document.getElementById("sim-mv-lbl");
-  if(lbl){lbl.textContent=(S.simMove>=0?"+":"")+S.simMove+"%";lbl.style.color=S.simMove>=0?"#3B6D11":"#A32D2D";}
-}
-
-function addHist(){
-  if(!S.hf.strike)return;
-  S.hist=[Object.assign({},S.hf,{id:Date.now(),createdAt:new Date().toLocaleDateString("ko-KR")})].concat(S.hist);
-  lsSet(HK,S.hist);
-  S.hf={date:"",coin:"BTC",optType:"C",strike:"",apy:"",qty:"",note:"",outcome:"pending"};render();
-}
-function updOut(id,o){S.hist=S.hist.map(function(h){return h.id===id?Object.assign({},h,{outcome:o}):h;});lsSet(HK,S.hist);render();}
-function delHist(id){S.hist=S.hist.filter(function(h){return h.id!==id;});lsSet(HK,S.hist);render();}
-function savePf(){S.pf={btc:parseFloat(S.pfv.btc)||0,eth:parseFloat(S.pfv.eth)||0,usdg:parseFloat(S.pfv.usdg)||0};lsSet(PK,S.pf);S.pfe=false;render();}
 
 function cv(el,ac,li){el.style.setProperty("--ac",ac);el.style.setProperty("--li",li);}
 function mk(tag,cls,html){var el=document.createElement(tag);if(cls)el.className=cls;if(html!==undefined)el.innerHTML=html;return el;}
-function inp(type,cls,ph,val,cb){var el=document.createElement("input");el.type=type;el.className=cls||"fi";if(ph)el.placeholder=ph;if(val!=null)el.value=val;el.oninput=cb;return el;}
+
+function renderTodayModal(){
+  var today = new Date().toLocaleDateString("ko-KR");
+  var todayItems = S.hist.filter(function(h){ return h.outcome==="pending" && h.expiry === today; });
+  var modal = mk("div","modal-bg");
+  var box = mk("div","modal-box");
+  box.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+    +'<div style="font-weight:700;font-size:15px">📅 오늘 만기 상품 ('+today+')</div>'
+    +'<span style="font-size:20px;cursor:pointer;color:#aaa" id="close-modal">✕</span></div>';
+  if(todayItems.length===0){
+    box.innerHTML += '<div style="text-align:center;color:#aaa;padding:20px">오늘 만기인 듀얼 인베스트먼트가 없습니다.</div>';
+  } else {
+    todayItems.forEach(function(h){
+      var item = mk("div","hi");
+      item.innerHTML = '<div class="hih"><div><span style="font-family:monospace;font-weight:700;font-size:14px">$'+Number(h.strike).toLocaleString()+'</span><span style="font-size:11px;color:#888;margin-left:8px">'+h.coin+(h.optType==="P"?" 풋":" 콜")+" · "+h.apy+"% APY"+(h.qty?" · "+h.qty+"코인":"")+'</span></div>'
+        +'<span class="bdg" style="background:#FAEEDA;color:#854F0B">진행중</span></div>'
+        +'<div style="font-size:11px;color:#aaa">저장일: '+h.createdAt+(h.note?" · "+h.note:"")+'</div>';
+      box.appendChild(item);
+    });
+  }
+  modal.appendChild(box);
+  modal.onclick = function(e){ if(e.target===modal) S.showTodayModal=false, render(); };
+  document.body.appendChild(modal);
+  document.getElementById("close-modal").onclick = function(){ S.showTodayModal=false; render(); };
+}
 
 function renderAnalysis(){
   var i=inst(),d=S.data,w=mk("div");
@@ -209,7 +176,6 @@ function renderAnalysis(){
   });
   w.appendChild(rc);
 
-  // TOP 3
   var picks=top3();
   var pc=mk("div","card");cv(pc,i.ac,i.li);
   pc.appendChild(mk("div","ct","안전 범위 내 추천 TOP 3 (APY 순위) — 탭해서 선택"));
@@ -228,7 +194,6 @@ function renderAnalysis(){
       pc.appendChild(card);
     });
 
-    // 선택된 상품 리스크 정보
     var sp=picks[S.selPick];
     var score=d.riskScore||0;
     var bc=score>=70?"#639922":score>=50?"#EF9F27":"#E24B4A";
@@ -241,14 +206,13 @@ function renderAnalysis(){
       det.appendChild(row);
     });
     det.innerHTML+='<div class="rrb"><div style="width:'+score+'%;height:100%;border-radius:3px;background:'+bc+'"></div></div><div class="rbl"><span>위험</span><span>보통</span><span>안전</span></div>';
-    var saveBtn=mk("button","sb","+ 이력에 저장");saveBtn.style.marginTop="10px";
-    (function(p2){saveBtn.onclick=function(){S.hf={date:new Date().toLocaleDateString("ko-KR"),coin:i.coin,optType:i.optType,strike:String(p2.strikeNum),apy:String((p2.apy*100).toFixed(2)),qty:"",note:"",outcome:"pending"};S.page="history";render();};})(sp);
+    var saveBtn=mk("button","sb","+ 오늘 만기 추적 목록에 저장");saveBtn.style.marginTop="10px";
+    (function(p2, coin, optType, expDate){saveBtn.onclick=function(){addHistFromPick(p2.strikeNum, p2.apy, coin, optType, expDate); render();};})(sp, i.coin, i.optType, sp.expDate);
     det.appendChild(saveBtn);
     pc.appendChild(det);
   }
   w.appendChild(pc);
 
-  // 전체 목록
   var all=mk("div","card");all.appendChild(mk("div","ct","전체 상품 ("+(d.products?d.products.length:0)+"개)"));
   all.appendChild(mk("div","pgrid",'<span style="font-size:9px;color:#bbb;font-weight:700">행사가</span><span style="font-size:9px;color:#bbb;font-weight:700">만기</span><span style="font-size:9px;color:#bbb;font-weight:700;text-align:right">APY</span><span style="font-size:9px;color:#bbb;font-weight:700;text-align:right">안전</span>'));
   (d.products||[]).slice(0,12).forEach(function(p){
@@ -263,162 +227,6 @@ function renderAnalysis(){
   return w;
 }
 
-function renderSimulator(){
-  var i=inst(),d=S.data,w=mk("div");w.style.paddingTop="14px";
-  if(!d){w.innerHTML='<div class="em"><div style="font-size:36px;margin-bottom:8px">⟿</div><div style="font-weight:700;color:#444;margin-bottom:4px">분석 먼저 실행하세요</div></div>';return w;}
-  var picks=top3();
-  if(!picks.length){w.innerHTML='<div class="card"><div style="font-size:13px;color:#aaa;text-align:center;padding:20px 0">안전 범위 상품 없음 — 만기를 늘려보세요</div></div>';return w;}
-
-  // 행사가 선택 (안전 상품만)
-  var c1=mk("div","card");c1.appendChild(mk("div","ct","행사가 선택 (안전 범위 내 상품만)"));
-  var sel=document.createElement("select");sel.className="fi";sel.style.marginBottom="8px";
-  picks.forEach(function(p,idx){
-    var o=document.createElement("option");o.value=idx;
-    var otm=(((p.strikeNum-d.price)/d.price)*100).toFixed(1);
-    o.textContent=(idx===0?"🥇 ":idx===1?"🥈 ":"🥉 ")+" $"+fmt(p.strikeNum)+" — APY "+(p.apy*100).toFixed(2)+"% — OTM +"+otm+"% — "+p.expDate;
-    if(idx===S.simPick)o.selected=true;
-    sel.appendChild(o);
-  });
-  sel.onchange=function(){S.simPick=Number(this.value);patchSim();};
-  c1.appendChild(sel);
-  c1.innerHTML+='<div style="font-size:11px;color:#888">현재가 <b style="color:'+i.ac+'">$'+fmt(d.price)+'</b> · 안전 기준 $'+fmt(d.safeStrike)+'</div>';
-  w.appendChild(c1);
-
-  // 코인 수량
-  var c2=mk("div","card");c2.appendChild(mk("div","ct","투자 수량 ("+i.coin+" 코인 수)"));
-  var qi=document.createElement("input");qi.type="number";qi.style="width:100%;font-size:15px;padding:8px 10px;border-radius:7px;border:1px solid #ddd;font-family:monospace;color:#1a1a1a;background:#fff";qi.value=S.simQty;qi.min=0.0001;qi.step=0.1;qi.placeholder="예: 0.5";
-  qi.oninput=function(){S.simQty=parseFloat(this.value)||1;patchSim();};
-  c2.appendChild(qi);c2.innerHTML+='<div style="font-size:11px;color:#888;margin-top:5px">실제로 구독할 코인 수량 입력</div>';
-  w.appendChild(c2);
-
-  // 슬라이더 — oninput에서 render() 없이 patchSim()만 호출
-  var c3=mk("div","card");cv(c3,i.ac,i.li);
-  var top=mk("div");top.style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px";
-  top.innerHTML='<div class="ct" style="margin:0">만기 시 가격 변동</div><div id="sim-mv-lbl" style="font-family:monospace;font-size:16px;font-weight:700;color:'+(S.simMove>=0?"#3B6D11":"#A32D2D")+'">'+(S.simMove>=0?"+":"")+S.simMove+'%</div>';
-  c3.appendChild(top);
-  var slr=document.createElement("input");
-  slr.type="range";slr.min=-30;slr.max=30;slr.step=1;slr.value=S.simMove;
-  slr.oninput=function(){S.simMove=Number(this.value);patchSim();};
-  c3.appendChild(slr);
-  c3.innerHTML+='<div style="display:flex;justify-content:space-between;font-size:10px;color:#bbb;margin-top:2px"><span>-30%</span><span>0%</span><span>+30%</span></div>';
-  w.appendChild(c3);
-
-  var area=mk("div");area.id="sim-res-area";area.innerHTML=buildSimHTML();
-  w.appendChild(area);
-  return w;
-}
-
-function renderHistory(){
-  var w=mk("div");w.style.paddingTop="14px";
-  var comp=S.hist.filter(function(h){return h.outcome!=="pending";});
-  var asgn=S.hist.filter(function(h){return h.outcome==="assigned";});
-  var rate=comp.length?Math.round(asgn.length/comp.length*100):null;
-  var avg=S.hist.length?S.hist.reduce(function(s,h){return s+(parseFloat(h.apy)||0);},0)/S.hist.length:null;
-
-  if(S.hist.length){
-    var sg=mk("div","hs");
-    [{l:"총 기록",v:S.hist.length+"회"},{l:"할당률",v:rate!=null?rate+"%":"-"},{l:"평균 APY",v:avg!=null?avg.toFixed(1)+"%":"-"}].forEach(function(m){sg.innerHTML+='<div class="hsi"><div style="font-size:9px;color:#999;text-transform:uppercase;margin-bottom:3px">'+m.l+'</div><div style="font-size:16px;font-weight:700;font-family:monospace">'+m.v+'</div></div>';});
-    w.appendChild(sg);
-  }
-
-  w.appendChild(mk("div","","<div style='background:#E6F1FB;border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:#185FA5;line-height:1.7'><b>할당됨</b> — 만기 시 가격이 행사가 이상 → 보유 코인이 USDG로 강제 매도됨<br><b>미할당</b> — 만기 시 가격이 행사가 미만 → 코인 유지 + 프리미엄 수취</div>"));
-
-  var fc=mk("div","card");fc.appendChild(mk("div","ct","기록 추가"));
-  var r1=mk("div");r1.style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:7px";
-  // 날짜
-  var d1=mk("div");d1.innerHTML='<div style="font-size:10px;color:#999;margin-bottom:3px">날짜</div>';
-  var di=inp("text","fi","4/15",S.hf.date,function(){S.hf.date=this.value;});d1.appendChild(di);r1.appendChild(d1);
-  // 코인
-  var d2=mk("div");d2.innerHTML='<div style="font-size:10px;color:#999;margin-bottom:3px">코인</div>';
-  var cs=document.createElement("select");cs.className="fi";["BTC","ETH"].forEach(function(c){var o=document.createElement("option");o.value=c;o.textContent=c;if(c===S.hf.coin)o.selected=true;cs.appendChild(o);});cs.onchange=function(){S.hf.coin=this.value;};d2.appendChild(cs);r1.appendChild(d2);
-  // 타입
-  var d3=mk("div");d3.innerHTML='<div style="font-size:10px;color:#999;margin-bottom:3px">타입</div>';
-  var ts=document.createElement("select");ts.className="fi";[{v:"C",l:"콜"},{v:"P",l:"풋"}].forEach(function(o){var opt=document.createElement("option");opt.value=o.v;opt.textContent=o.l;if(o.v===S.hf.optType)opt.selected=true;ts.appendChild(opt);});ts.onchange=function(){S.hf.optType=this.value;};d3.appendChild(ts);r1.appendChild(d3);
-  fc.appendChild(r1);
-  var r2=mk("div");r2.style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:7px";
-  [["행사가($)","strike","75000"],["APY(%)","apy","11.2"],["수량(코인)","qty","0.5"]].forEach(function(info){
-    var d4=mk("div");d4.innerHTML='<div style="font-size:10px;color:#999;margin-bottom:3px">'+info[0]+'</div>';
-    var el=inp("number","fi",info[2],S.hf[info[1]],function(k){return function(){S.hf[k]=this.value;};}(info[1]));
-    d4.appendChild(el);r2.appendChild(d4);
-  });
-  fc.appendChild(r2);
-  var ni=inp("text","fi","메모 (선택)",S.hf.note,function(){S.hf.note=this.value;});ni.style.marginBottom="7px";fc.appendChild(ni);
-  var ab=mk("button","sb","+ 저장");ab.onclick=addHist;fc.appendChild(ab);
-  w.appendChild(fc);
-
-  if(!S.hist.length){w.appendChild(mk("div","","<div style='text-align:center;padding:32px 0;color:#aaa;font-size:13px'>기록 없음</div>"));}
-  else S.hist.forEach(function(h){
-    var hc=mk("div","hi");
-    var qty=parseFloat(h.qty)||0;
-    var apy=parseFloat(h.apy)||0;
-    var strike=parseFloat(h.strike)||0;
-    var premEst=qty>0?qty*strike*(apy/100/365*3):0;
-    hc.innerHTML='<div class="hih"><div><span style="font-family:monospace;font-weight:700;font-size:14px">$'+Number(h.strike).toLocaleString()+'</span><span style="font-size:11px;color:#888;margin-left:8px">'+h.coin+(h.optType==="P"?" 풋":" 콜")+" · "+h.apy+"% APY"+(h.qty?" · "+h.qty+"코인":"")+'</span></div>'
-      +'<span class="bdg" style="background:'+(h.outcome==="assigned"?"#FCEBEB":h.outcome==="pending"?"#FAEEDA":"#EAF3DE")+';color:'+(h.outcome==="assigned"?"#A32D2D":h.outcome==="pending"?"#854F0B":"#3B6D11")+'">'+(h.outcome==="assigned"?"할당됨":h.outcome==="pending"?"진행중":"미할당")+'</span></div>'
-      +'<div style="font-size:11px;color:#aaa">'+h.createdAt+(h.note?" · "+h.note:"")+'</div>';
-    if(qty>0&&h.outcome!=="pending"){
-      var isA=h.outcome==="assigned";
-      hc.innerHTML+='<div style="background:'+(isA?"#FAEEDA":"#EAF3DE")+';border-radius:6px;padding:6px 9px;margin-top:6px;font-size:11px;color:'+(isA?"#854F0B":"#3B6D11")+'">'
-        +(isA?'할당: $'+fmt(strike)+'에 '+qty+'코인 매도 · 프리미엄 ≈ $'+fmt(premEst,2)
-             :'미할당: '+qty+'코인 유지 · 프리미엄 ≈ $'+fmt(premEst,2)+' 수취')+'</div>';
-    }
-    if(h.outcome==="pending"){
-      var ha=mk("div","ha");
-      var a1=mk("button","hb","할당됨");a1.style="border-color:#E24B4A;background:#FCEBEB;color:#A32D2D";(function(id){a1.onclick=function(){updOut(id,"assigned");};})(h.id);
-      var a2=mk("button","hb","미할당");a2.style="border-color:#639922;background:#EAF3DE;color:#3B6D11";(function(id){a2.onclick=function(){updOut(id,"not_assigned");};})(h.id);
-      var a3=mk("button","hb","삭제");a3.style.color="#aaa";(function(id){a3.onclick=function(){delHist(id);};})(h.id);
-      ha.appendChild(a1);ha.appendChild(a2);ha.appendChild(a3);hc.appendChild(ha);
-    }
-    w.appendChild(hc);
-  });
-  return w;
-}
-
-function renderPortfolio(){
-  var w=mk("div");w.style.paddingTop="14px";
-  var pend=S.hist.filter(function(h){return h.outcome==="pending";});
-  var comp=S.hist.filter(function(h){return h.outcome!=="pending";});
-  var asgn=S.hist.filter(function(h){return h.outcome==="assigned";});
-  var rate=comp.length?Math.round(asgn.length/comp.length*100):null;
-  var avg=S.hist.length?S.hist.reduce(function(s,h){return s+(parseFloat(h.apy)||0);},0)/S.hist.length:null;
-
-  var hc=mk("div","card");
-  var hh=mk("div");hh.style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px";
-  hh.innerHTML='<div class="ct" style="margin:0">보유 현황</div>';
-  var eb=mk("button","eb2",S.pfe?"취소":"수정");
-  eb.onclick=function(){S.pfe=!S.pfe;S.pfv={btc:String(S.pf.btc),eth:String(S.pf.eth),usdg:String(S.pf.usdg)};render();};
-  hh.appendChild(eb);hc.appendChild(hh);
-  if(S.pfe){
-    [["BTC","btc"],["ETH","eth"],["USDG","usdg"]].forEach(function(info){
-      var row=mk("div","per");row.innerHTML='<span style="min-width:44px;font-size:12px;font-weight:700">'+info[0]+'</span>';
-      var el=document.createElement("input");el.type="number";el.className="pi";el.value=S.pfv[info[1]];el.min=0;el.step=0.01;
-      (function(k){el.oninput=function(){S.pfv[k]=this.value;};})(info[1]);
-      row.appendChild(el);hc.appendChild(row);
-    });
-    var sv=mk("button","sb","저장");sv.style.marginTop="4px";sv.onclick=savePf;hc.appendChild(sv);
-  } else {
-    var pg=mk("div","pfg");
-    [["BTC","#BA7517",S.pf.btc],["ETH","#185FA5",S.pf.eth],["USDG","#3B6D11",S.pf.usdg]].forEach(function(x){pg.innerHTML+='<div class="pfc"><div style="font-size:10px;color:#999;margin-bottom:3px">'+x[0]+'</div><div style="font-size:16px;font-weight:700;font-family:monospace;color:'+x[1]+'">'+x[2]+'</div></div>';});
-    hc.appendChild(pg);
-  }
-  w.appendChild(hc);
-
-  var pc=mk("div","card");pc.appendChild(mk("div","ct","진행 중 ("+pend.length+"개)"));
-  if(!pend.length)pc.innerHTML+='<div style="font-size:12px;color:#aaa;text-align:center;padding:10px 0">없음</div>';
-  else pend.forEach(function(p){pc.innerHTML+='<div class="ppr"><span style="font-family:monospace;font-weight:600">'+p.coin+' $'+Number(p.strike).toLocaleString()+(p.qty?" · "+p.qty+"코인":"")+'</span><span style="color:#888">'+p.apy+'% APY</span></div>';});
-  w.appendChild(pc);
-
-  if(S.hist.length){
-    var sc=mk("div","card");sc.appendChild(mk("div","ct","운용 통계"));
-    [["총 기록",S.hist.length+"회"],["할당률",rate!=null?rate+"%":"-"],["평균 APY",avg!=null?avg.toFixed(2)+"%":"-"],["미할당 수익",S.hist.filter(function(h){return h.outcome==="not_assigned";}).length+"회"]].forEach(function(r,idx,arr){
-      sc.innerHTML+='<div class="srow"'+(idx===arr.length-1?' style="border-bottom:none"':'')+' ><span style="color:#888">'+r[0]+'</span><span style="font-family:monospace;font-weight:600">'+r[1]+'</span></div>';
-    });
-    w.appendChild(sc);
-  }
-  w.appendChild(mk("div","disc","※ 이력·포트폴리오는 브라우저 localStorage에 저장됩니다."));
-  return w;
-}
-
 function render(){
   var i=inst();
   var app=document.getElementById("app");
@@ -429,38 +237,34 @@ function render(){
   INSTS.forEach(function(it){
     var t=mk("div","tab"+(it.key===S.sk?" on":""));cv(t,it.ac,it.li);
     t.innerHTML='<div class="tl">'+it.label+'</div><div class="tt" style="background:'+it.tBg+';color:'+it.tC+'">'+it.tag+'</div>';
-    (function(key){t.onclick=function(){S.sk=key;S.phase="idle";S.data=null;S.err="";S.selPick=0;S.simPick=0;render();};})(it.key);
+    (function(key){t.onclick=function(){S.sk=key;S.phase="idle";S.data=null;S.err="";S.selPick=0;render();};})(it.key);
     tabs.appendChild(t);
   });
   hd.appendChild(tabs);
 
-  var nav=mk("div","nav");cv(nav,i.ac,i.li);
-  PAGES.forEach(function(p){
-    var b=mk("button","nb"+(p.key===S.page?" on":""));
-    b.innerHTML='<span class="ni">'+p.icon+'</span><span class="nl">'+p.lbl+'</span>';
-    (function(key){b.onclick=function(){S.page=key;render();};})(p.key);
-    nav.appendChild(b);
-  });
-  hd.appendChild(nav);
+  var ctrl=mk("div","ctrl");
+  var sel=document.createElement("select");
+  [{v:3,l:"만기 1~3일"},{v:5,l:"만기 1~5일"},{v:7,l:"만기 1~7일"}].forEach(function(o){var opt=document.createElement("option");opt.value=o.v;opt.textContent=o.l;if(o.v===S.exp)opt.selected=true;sel.appendChild(opt);});
+  sel.onchange=function(){S.exp=Number(this.value);};
+  var btn=mk("button","rb",S.phase==="loading"?"조회 중...":"▶ 실시간 분석");
+  if(S.phase==="loading")btn.disabled=true;
+  btn.onclick=runAnalysis;
+  ctrl.appendChild(sel);ctrl.appendChild(btn);
 
-  if(S.page==="analysis"){
-    var ctrl=mk("div","ctrl");
-    var sel=document.createElement("select");
-    [{v:3,l:"만기 1~3일"},{v:5,l:"만기 1~5일"},{v:7,l:"만기 1~7일"}].forEach(function(o){var opt=document.createElement("option");opt.value=o.v;opt.textContent=o.l;if(o.v===S.exp)opt.selected=true;sel.appendChild(opt);});
-    sel.onchange=function(){S.exp=Number(this.value);};
-    var btn=mk("button","rb",S.phase==="loading"?"조회 중...":"▶ 실시간 분석");
-    if(S.phase==="loading")btn.disabled=true;
-    btn.onclick=runAnalysis;
-    ctrl.appendChild(sel);ctrl.appendChild(btn);hd.appendChild(ctrl);
-  }
+  // 오늘 만기 조회 버튼 추가
+  var todayBtn=mk("button","eb2","📅 오늘 만기 조회");
+  todayBtn.style.marginLeft="6px";
+  todayBtn.onclick=function(){S.showTodayModal=true;render();};
+  ctrl.appendChild(todayBtn);
+  hd.appendChild(ctrl);
+
   app.appendChild(hd);
 
   var pg=mk("div","pg");cv(pg,i.ac,i.li);
-  if(S.page==="analysis")  pg.appendChild(renderAnalysis());
-  if(S.page==="simulator") pg.appendChild(renderSimulator());
-  if(S.page==="history")   pg.appendChild(renderHistory());
-  if(S.page==="portfolio") pg.appendChild(renderPortfolio());
+  pg.appendChild(renderAnalysis());
   app.appendChild(pg);
+
+  if(S.showTodayModal) renderTodayModal();
 }
 init();
 </script>
